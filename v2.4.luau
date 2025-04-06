@@ -350,7 +350,7 @@ function Environment.Functions:ResetSettings()
 		LockedColor = "255, 70, 70",
 		Transparency = 0.5,
 		Sides = 60,
-    Thickness = 1,
+                Thickness = 1,
 		Filled = false
 	}
 	
