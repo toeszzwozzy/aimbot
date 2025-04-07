@@ -134,34 +134,36 @@ local function GetPredictionValue()
 end
 
 local function GetClosestPlayer()
-	if not Environment.Locked then
-		if Environment.FOVSettings.Enabled then
-			RequiredDistance = Environment.FOVSettings.Amount
-		else
-			RequiredDistance = 2000
-		end
-		for _, v in next, Players:GetPlayers() do
-			if v ~= LocalPlayer then
-				if v.Character and v.Character:FindFirstChild(Environment.Settings.LockPart) and v.Character:FindFirstChildOfClass("Humanoid") then
-					if Environment.Settings.TeamCheck and v.Team == LocalPlayer.Team then continue end
-					if Environment.Settings.AliveCheck and v.Character:FindFirstChildOfClass("Humanoid").Health <= 0 then continue end
-					if Environment.Settings.WallCheck and #(Camera:GetPartsObscuringTarget({v.Character[Environment.Settings.LockPart].Position}, v.Character:GetDescendants())) > 0 then continue end
-					
-					local Vector, OnScreen = Camera:WorldToViewportPoint(v.Character[Environment.Settings.LockPart].Position)
-					local Distance = (Vector2.new(UserInputService:GetMouseLocation().X, UserInputService:GetMouseLocation().Y) - Vector2.new(Vector.X, Vector.Y)).Magnitude
-					
-					if Distance < RequiredDistance and OnScreen then
-						RequiredDistance = Distance
-						Environment.Locked = v
-					end
-				end
-			end
-		end
-	elseif (Vector2.new(UserInputService:GetMouseLocation().X, UserInputService:GetMouseLocation().Y) - Vector2.new(Camera:WorldToViewportPoint(Environment.Locked.Character[Environment.Settings.LockPart].Position).X, Camera:WorldToViewportPoint(Environment.Locked.Character[Environment.Settings.LockPart].Position).Y)).Magnitude > RequiredDistance then
-		Environment.Locked = nil
-		Animation:Cancel()
-		Environment.FOVCircle.Color = GetColor(Environment.FOVSettings.Color)
-	end
+    if not Environment.Locked then
+        if Environment.FOVSettings.Enabled then
+            RequiredDistance = Environment.FOVSettings.Amount
+        else
+            RequiredDistance = 2000
+        end
+        for _, v in next, Players:GetPlayers() do
+            if v ~= LocalPlayer then
+                if v.Character and v.Character:FindFirstChild(Environment.Settings.LockPart) and v.Character:FindFirstChildOfClass("Humanoid") then
+                    if Environment.Settings.TeamCheck and v.Team == LocalPlayer.Team then continue end
+                    if Environment.Settings.AliveCheck and v.Character:FindFirstChildOfClass("Humanoid").Health <= 0 then continue end
+                    if Environment.Settings.WallCheck and #(Camera:GetPartsObscuringTarget({v.Character[Environment.Settings.LockPart].Position}, v.Character:GetDescendants())) > 0 then continue end
+                    
+                    local Vector, OnScreen = Camera:WorldToViewportPoint(v.Character[Environment.Settings.LockPart].Position)
+                    local Distance = (Vector2.new(UserInputService:GetMouseLocation().X, UserInputService:GetMouseLocation().Y) - Vector2.new(Vector.X, Vector.Y)).Magnitude
+                    
+                    if Distance < RequiredDistance and OnScreen then
+                        RequiredDistance = Distance
+                        Environment.Locked = v
+                    end
+                end
+            end
+        end
+    elseif (Vector2.new(UserInputService:GetMouseLocation().X, UserInputService:GetMouseLocation().Y) - Vector2.new(Camera:WorldToViewportPoint(Environment.Locked.Character[Environment.Settings.LockPart].Position).X, Camera:WorldToViewportPoint(Environment.Locked.Character[Environment.Settings.LockPart].Position).Y)).Magnitude > RequiredDistance then
+        Environment.Locked = nil
+        if Animation then  -- Add this nil check
+            Animation:Cancel()
+        end
+        Environment.FOVCircle.Color = GetColor(Environment.FOVSettings.Color)
+    end
 end
 
 --// Typing Check
@@ -246,36 +248,40 @@ local function Load()
 	end)
 
 	ServiceConnections.InputBeganConnection = UserInputService.InputBegan:Connect(function(Input)
-		if not Typing then
-			pcall(function()
-				if Input.KeyCode == Enum.KeyCode[Environment.Settings.TriggerKey] then
-					if Environment.Settings.Toggle then
-						Running = not Running
-						if not Running then
-							Environment.Locked = nil
-							Animation:Cancel()
-							Environment.FOVCircle.Color = GetColor(Environment.FOVSettings.Color)
-						end
-					else
-						Running = true
-					end
-				end
-			end)
-			pcall(function()
-				if Input.UserInputType == Enum.UserInputType[Environment.Settings.TriggerKey] then
-					if Environment.Settings.Toggle then
-						Running = not Running
-						if not Running then
-							Environment.Locked = nil
-							Animation:Cancel()
-							Environment.FOVCircle.Color = GetColor(Environment.FOVSettings.Color)
-						end
-					else
-						Running = true
-					end
-				end
-			end)
-		end
+	    if not Typing then
+	        pcall(function()
+	            if Input.KeyCode == Enum.KeyCode[Environment.Settings.TriggerKey] then
+	                if Environment.Settings.Toggle then
+	                    Running = not Running
+	                    if not Running then
+	                        Environment.Locked = nil
+	                        if Animation then  -- Add this nil check
+	                            Animation:Cancel()
+	                        end
+	                        Environment.FOVCircle.Color = GetColor(Environment.FOVSettings.Color)
+	                    end
+	                else
+	                    Running = true
+	                end
+	            end
+	        end)
+	        pcall(function()
+	            if Input.UserInputType == Enum.UserInputType[Environment.Settings.TriggerKey] then
+	                if Environment.Settings.Toggle then
+	                    Running = not Running
+	                    if not Running then
+	                        Environment.Locked = nil
+	                        if Animation then  -- Add this nil check
+	                            Animation:Cancel()
+	                        end
+	                        Environment.FOVCircle.Color = GetColor(Environment.FOVSettings.Color)
+	                    end
+	                else
+	                    Running = true
+	                end
+	            end
+	        end)
+	    end  -- This end was missing
 	end)
 
 	ServiceConnections.InputEndedConnection = UserInputService.InputEnded:Connect(function(Input)
@@ -283,20 +289,24 @@ local function Load()
 			pcall(function()
 				if Input.KeyCode == Enum.KeyCode[Environment.Settings.TriggerKey] then
 					if not Environment.Settings.Toggle then
-						Running = false
-						Environment.Locked = nil
-						Animation:Cancel()
-						Environment.FOVCircle.Color = GetColor(Environment.FOVSettings.Color)
+					    Running = false
+					    Environment.Locked = nil
+					    if Animation then  -- Add this nil check
+					        Animation:Cancel()
+					    end
+					    Environment.FOVCircle.Color = GetColor(Environment.FOVSettings.Color)
 					end
 				end
 			end)
 			pcall(function()
 				if Input.UserInputType == Enum.UserInputType[Environment.Settings.TriggerKey] then
 					if not Environment.Settings.Toggle then
-						Running = false
-						Environment.Locked = nil
-						Animation:Cancel()
-						Environment.FOVCircle.Color = GetColor(Environment.FOVSettings.Color)
+					    Running = false
+					    Environment.Locked = nil
+					    if Animation then  -- Add this nil check
+					        Animation:Cancel()
+					    end
+					    Environment.FOVCircle.Color = GetColor(Environment.FOVSettings.Color)
 					end
 				end
 			end)
