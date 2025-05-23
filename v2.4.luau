@@ -7,6 +7,9 @@ end)
 getgenv().Aimbot = {}
 local Environment = getgenv().Aimbot
 
+--// Make CopKillerMode accessible at the environment level
+Environment.CopKillerMode = false
+
 --// Services
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
@@ -149,9 +152,8 @@ local function IsPlayerCop(player)
     return player and player.Team and CopTeams[player.Team.Name] or false
 end
 
--- Modified TeamCheck function to support Cop Killer Mode
 local function TeamCheck(player)
-    if CopKillerMode then
+    if Environment.CopKillerMode then
         return not IsPlayerCop(player)
     else
         return not Environment.Settings.TeamCheck or player.Team ~= LocalPlayer.Team
