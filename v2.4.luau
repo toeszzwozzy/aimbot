@@ -27,7 +27,6 @@ local FileNames = {"Aimbot", "Configuration.json", "Drawing.json", "Prediction.j
 local Typing, Running, Animation, RequiredDistance, ServiceConnections = false, false, nil, 2000, {}
 
 --// Cop Killer Mode Variables
-local CopKillerMode = false
 local CopTeams = {
     ["Minimum Security"] = true,
     ["Sheriff's Office"] = true,
