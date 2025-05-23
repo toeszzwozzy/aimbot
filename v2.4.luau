@@ -7,9 +7,6 @@ end)
 getgenv().Aimbot = {}
 local Environment = getgenv().Aimbot
 
---// Make CopKillerMode accessible at the environment level
-Environment.CopKillerMode = false
-
 --// Services
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
@@ -25,16 +22,6 @@ local LocalPlayer = Players.LocalPlayer
 local Title = "Exunys Developer"
 local FileNames = {"Aimbot", "Configuration.json", "Drawing.json", "Prediction.json"}
 local Typing, Running, Animation, RequiredDistance, ServiceConnections = false, false, nil, 2000, {}
-
---// Cop Killer Mode Variables
-local CopTeams = {
-    ["Minimum Security"] = true,
-    ["Sheriff's Office"] = true,
-    ["State Police"] = true,
-    ["WeaponsTester"] = true,
-    ["Department of Corrections"] = true,
-    ["VCSO-SWAT"] = true
-}
 
 --// Support Functions
 local mousemoverel = mousemoverel or (Input and Input.MouseMove)
@@ -146,19 +133,6 @@ local function GetPredictionValue()
 	return Environment.PredictionSettings.DefaultPrediction
 end
 
--- Function to check if a player is a cop
-local function IsPlayerCop(player)
-    return player and player.Team and CopTeams[player.Team.Name] or false
-end
-
-local function TeamCheck(player)
-    if Environment.CopKillerMode then
-        return not IsPlayerCop(player)
-    else
-        return not Environment.Settings.TeamCheck or player.Team ~= LocalPlayer.Team
-    end
-end
-
 local function GetClosestPlayer()
     if not Environment.Locked then
         if Environment.FOVSettings.Enabled then
@@ -169,8 +143,7 @@ local function GetClosestPlayer()
         for _, v in next, Players:GetPlayers() do
             if v ~= LocalPlayer then
                 if v.Character and v.Character:FindFirstChild(Environment.Settings.LockPart) and v.Character:FindFirstChildOfClass("Humanoid") then
-                    -- Modified team check to use our new function
-                    if not TeamCheck(v) then continue end
+                    if Environment.Settings.TeamCheck and v.Team == LocalPlayer.Team then continue end
                     if Environment.Settings.AliveCheck and v.Character:FindFirstChildOfClass("Humanoid").Health <= 0 then continue end
                     if Environment.Settings.WallCheck and #(Camera:GetPartsObscuringTarget({v.Character[Environment.Settings.LockPart].Position}, v.Character:GetDescendants())) > 0 then continue end
                     
@@ -308,7 +281,7 @@ local function Load()
 	                end
 	            end
 	        end)
-	    end
+	    end  -- This end was missing
 	end)
 
 	ServiceConnections.InputEndedConnection = UserInputService.InputEnded:Connect(function(Input)
@@ -343,11 +316,6 @@ end
 
 --// Functions
 Environment.Functions = {}
-
--- Get current Cop Killer Mode state
-function Environment.Functions:GetCopKillerMode()
-    return CopKillerMode
-end
 
 function Environment.Functions:Exit()
 	SaveSettings()
@@ -392,7 +360,7 @@ function Environment.Functions:ResetSettings()
 		LockedColor = "255, 70, 70",
 		Transparency = 0.5,
 		Sides = 60,
-        Thickness = 1,
+                Thickness = 1,
 		Filled = false
 	}
 	
@@ -403,9 +371,6 @@ function Environment.Functions:ResetSettings()
 		PingBasedMultiplier = 0.001, -- Multiplier for ping-based prediction
 		CustomPrediction = 0.2
 	}
-    
-    -- Reset Cop Killer Mode
-    CopKillerMode = false
 end
 
 --// Support Check
