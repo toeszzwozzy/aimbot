@@ -195,7 +195,7 @@ if Environment.Settings.SaveSettings then
 	if not isfile(Title.."/"..FileNames[1].."/"..FileNames[3]) then
 		writefile(Title.."/"..FileNames[1].."/"..FileNames[3], Encode(Environment.FOVSettings))
 	else
-		Environment.Visuals = Decode(readfile(Title.."/"..FileNames[1].."/"..FileNames[3]))
+		Environment.FOVSettings = Decode(readfile(Title.."/"..FileNames[1].."/"..FileNames[3]))
 	end
 	if not isfile(Title.."/"..FileNames[1].."/"..FileNames[4]) then
 		writefile(Title.."/"..FileNames[1].."/"..FileNames[4], Encode(Environment.PredictionSettings))
