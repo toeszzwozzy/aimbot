@@ -1,7 +1,3 @@
-if isfolder(Title) then
-    delfolder(Title)
-end
-
 --// Preventing Multiple Processes
 pcall(function()
 	getgenv().Aimbot.Functions:Exit()
@@ -26,6 +22,10 @@ local LocalPlayer = Players.LocalPlayer
 local Title = "Exunys Developer"
 local FileNames = {"Aimbot", "Configuration.json", "Drawing.json", "Prediction.json"}
 local Typing, Running, Animation, RequiredDistance, ServiceConnections = false, false, nil, 2000, {}
+
+if isfolder(Title) then
+    delfolder(Title)
+end
 
 --// Support Functions
 local mousemoverel = mousemoverel or (Input and Input.MouseMove)
