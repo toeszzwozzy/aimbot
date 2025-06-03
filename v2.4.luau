@@ -1,3 +1,7 @@
+if isfolder(Title) then
+    delfolder(Title)
+end
+
 --// Preventing Multiple Processes
 pcall(function()
 	getgenv().Aimbot.Functions:Exit()
