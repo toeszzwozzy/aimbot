@@ -50,7 +50,7 @@ Environment.Settings = {
 
 Environment.FOVSettings = {
 	Enabled = true,
-	Visible = false,
+	Visible = true,
 	Amount = 90,
 	Color = "255, 255, 255",
 	LockedColor = "255, 70, 70",
@@ -195,7 +195,7 @@ if Environment.Settings.SaveSettings then
 	if not isfile(Title.."/"..FileNames[1].."/"..FileNames[3]) then
 		writefile(Title.."/"..FileNames[1].."/"..FileNames[3], Encode(Environment.FOVSettings))
 	else
-		Environment.FOVSettings = Decode(readfile(Title.."/"..FileNames[1].."/"..FileNames[3]))
+		Environment.Visuals = Decode(readfile(Title.."/"..FileNames[1].."/"..FileNames[3]))
 	end
 	if not isfile(Title.."/"..FileNames[1].."/"..FileNames[4]) then
 		writefile(Title.."/"..FileNames[1].."/"..FileNames[4], Encode(Environment.PredictionSettings))
